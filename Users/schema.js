@@ -5,6 +5,7 @@ const loginSchema = new mongoose.Schema({
     lastName: { type: String }, 
     email: { type: String, required: true },
     password: { type: String, required: true },
+    registrationDate: { type: Date }
 },
     {collection: "users"}
 );

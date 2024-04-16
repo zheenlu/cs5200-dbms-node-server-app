@@ -38,15 +38,34 @@ function userRoutes(app) {
         res.status(401).json({ message: "Unauthorized" });
     };
 
+    // const register = async (req, res) => {
+    //     const user = await dao.findUserByEmail(req.body.email);
+    //     if (user) {
+    //         return res.status(400).json({ message: "Email already taken" });
+    //     }
+
+    //     currentUser = await dao.createUser(req.body);
+    //     res.json(currentUser);
+
+    // };
     const register = async (req, res) => {
-        const user = await dao.findUserByEmail(req.body.email);
-        if (user) {
-            return res.status(400).json({ message: "Email already taken" });
+        try {
+            const userExists = await dao.findUserByEmail(req.body.email);
+            if (userExists) {
+                res.status(400).json({ message: "Email already taken" });
+                return;
+            }
+            const newUser = {
+                ...req.body,
+                registrationDate: new Date() 
+            };
+            const createdUser = await dao.createUser(newUser); 
+            currentUser = createdUser;
+            res.json(createdUser);
+        } catch (error) {
+            console.error("Registration error:", error);
+            res.status(500).json({ message: "Internal server error" });
         }
-
-        currentUser = await dao.createUser(req.body);
-        res.json(currentUser);
-
     };
  
     const findAllUsers = async (req, res) => {
