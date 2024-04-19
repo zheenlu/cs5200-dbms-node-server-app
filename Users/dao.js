@@ -12,17 +12,8 @@ export async function findUserByEmail(email, password) {
   if (userDetails[0].userId) {
       return results[0];
   }
-  return null; // Return null if no user found or password mismatch
+  return null; 
 }
-
-// export async function createUser(userData) {
-//   const { firstName, lastName, email, password, registrationDate } = userData;
-//   const [result] = await pool.query(
-//       'INSERT INTO user (first_name, last_name, email, password, registration_date) VALUES (?, ?, ?, ?, ?)',
-//       [firstName, lastName, email, password, registrationDate]
-//   );
-//   return result.insertId;
-// }
 
 export async function registerUser(userData) {
   const { firstName, lastName, email, password } = userData;
@@ -38,6 +29,6 @@ export async function registerUser(userData) {
 
 export async function findUserById(id) {
   const [results] = await pool.execute('CALL GetUserByID(?)', [id]);
-  return results[0][0]; // Assuming the stored procedure returns a single row
+  return results[0][0]; 
 }
 
