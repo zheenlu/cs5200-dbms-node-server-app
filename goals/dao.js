@@ -37,13 +37,43 @@ export async function deleteGoal(goalId) {
 }
 
 
+// export async function updateGoal(goalId, goalData) {
+//     const { name, description, end_date, status, category_id, resource_id } = goalData;
+//     try {
+//         const [result] = await pool.execute('CALL UpdateGoal(?, ?, ?, ?, ?, ?, ?)', [
+//             goalId, name, description, end_date, status, category_id, resource_id
+//         ]);
+//         return result;
+//     } catch (error) {
+//         throw new Error(`Failed to update goal: ${error.message}`);
+//     }
+// }
+// export async function updateGoal(goalId, goalData) {
+//     const { name, description, start_date, end_date, status, category_id, resource_id } = goalData;
+//     try {
+//         await pool.execute('CALL UpdateGoal(?, ?, ?, ?, ?, ?, ?, ?)', [
+//             goalId, name, description, start_date, end_date, status, category_id, resource_id
+//         ]);
+//     } catch (error) {
+//         throw new Error(`Failed to update goal: ${error.message}`);
+//     }
+// }
+// export async function updateGoal(goalId, goalData) {
+//     const { name, description, start_date, end_date, status, category_id, resource_id } = goalData;
+//     try {
+//         await pool.execute('CALL UpdateGoal(?, ?, ?, ?, ?, ?, ?, ?)', [
+//             goalId, name, description, start_date, end_date, status, category_id, resource_id
+//         ]);
+//     } catch (error) {
+//         throw new Error(`Failed to update goal: ${error.message}`);
+//     }
+// }
 export async function updateGoal(goalId, goalData) {
-    const { name, description, end_date, status, category_id, resource_id } = goalData;
+    const { name, description, start_date, end_date, status, category_id, resource_link } = goalData;
     try {
-        const [result] = await pool.execute('CALL UpdateGoal(?, ?, ?, ?, ?, ?, ?)', [
-            goalId, name, description, end_date, status, category_id, resource_id
+        await pool.execute('CALL UpdateGoal(?, ?, ?, ?, ?, ?, ?, ?)', [
+            goalId, name || null, description || null, start_date || null, end_date || null, status || null, category_id || null, resource_link || null
         ]);
-        return result;
     } catch (error) {
         throw new Error(`Failed to update goal: ${error.message}`);
     }
