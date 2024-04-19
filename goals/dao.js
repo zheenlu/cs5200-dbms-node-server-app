@@ -8,27 +8,27 @@ export async function fetchAllGoals(userId) {
 
 export async function setNewGoal(goalData, userId) {
     const { name, description, learningResource, endDate, status, category } = goalData;
-    if (!name || !description || !endDate || !status || !category) {
-        throw new Error('Missing required goal data');
+
+    // Find or create resource
+    const [resource] = await pool.query('SELECT id FROM resource WHERE link = ?', [learningResource]);
+    let resourceId;
+    if (resource.length) {
+        resourceId = resource[0].id;
+    } else {
+        const [insertResource] = await pool.query('INSERT INTO resource (name, link) VALUES (?, ?)', ['Resource Name', learningResource]);
+        resourceId = insertResource.insertId;
     }
 
-    // Assuming you fetch category_id as shown previously
-    const [categoryRows] = await pool.query('SELECT id FROM category WHERE name = ?', [category]);
-    if (categoryRows.length === 0) {
-        throw new Error('Category not found');
-    }
-    const category_id = categoryRows[0].id;
+    // Find category id
+    const [categoryRow] = await pool.query('SELECT id FROM category WHERE name = ?', [category]);
+    if (!categoryRow.length) throw new Error('Category not found');
+    const categoryId = categoryRow[0].id;
 
-    try {
-        const [results] = await pool.execute('CALL SetNewGoal(?, ?, NOW(), ?, ?, ?, ?, @new_goal_id)', [
-            name, description, endDate, status, category_id, userId
-        ]);
-        const [output] = await pool.query('SELECT @new_goal_id AS newGoalId');
-        return output[0].newGoalId;
-    } catch (error) {
-        throw error;
-    }
+    // Insert goal with resource and category id
+    const [result] = await pool.query('INSERT INTO goal (name, description, start_date, end_date, status, category_id, resource_id, user_id) VALUES (?, ?, NOW(), ?, ?, ?, ?, ?)', [name, description, endDate, status, categoryId, resourceId, userId]);
+    return result.insertId;
 }
+
 
 
 export async function deleteGoal(goalId) {
@@ -37,4 +37,14 @@ export async function deleteGoal(goalId) {
 }
 
 
-  
+export async function updateGoal(goalId, goalData) {
+    const { name, description, end_date, status, category_id, resource_id } = goalData;
+    try {
+        const [result] = await pool.execute('CALL UpdateGoal(?, ?, ?, ?, ?, ?, ?)', [
+            goalId, name, description, end_date, status, category_id, resource_id
+        ]);
+        return result;
+    } catch (error) {
+        throw new Error(`Failed to update goal: ${error.message}`);
+    }
+}

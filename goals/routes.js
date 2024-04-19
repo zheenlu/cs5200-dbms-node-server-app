@@ -37,7 +37,16 @@ function goalRoutes(app) {
     });
 
     
-
+    router.put("/:userId/goals/:goalId", async (req, res) => {
+        try {
+            await dao.updateGoal(req.params.goalId, req.body);
+            res.json({ message: "Goal updated successfully" });
+        } catch (error) {
+            console.error("Error updating goal:", error);
+            res.status(500).json({ error: error.message });
+        }
+    });
+    
     
     
     
