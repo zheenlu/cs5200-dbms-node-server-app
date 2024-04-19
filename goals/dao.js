@@ -37,37 +37,6 @@ export async function deleteGoal(goalId) {
 }
 
 
-// export async function updateGoal(goalId, goalData) {
-//     const { name, description, end_date, status, category_id, resource_id } = goalData;
-//     try {
-//         const [result] = await pool.execute('CALL UpdateGoal(?, ?, ?, ?, ?, ?, ?)', [
-//             goalId, name, description, end_date, status, category_id, resource_id
-//         ]);
-//         return result;
-//     } catch (error) {
-//         throw new Error(`Failed to update goal: ${error.message}`);
-//     }
-// }
-// export async function updateGoal(goalId, goalData) {
-//     const { name, description, start_date, end_date, status, category_id, resource_id } = goalData;
-//     try {
-//         await pool.execute('CALL UpdateGoal(?, ?, ?, ?, ?, ?, ?, ?)', [
-//             goalId, name, description, start_date, end_date, status, category_id, resource_id
-//         ]);
-//     } catch (error) {
-//         throw new Error(`Failed to update goal: ${error.message}`);
-//     }
-// }
-// export async function updateGoal(goalId, goalData) {
-//     const { name, description, start_date, end_date, status, category_id, resource_id } = goalData;
-//     try {
-//         await pool.execute('CALL UpdateGoal(?, ?, ?, ?, ?, ?, ?, ?)', [
-//             goalId, name, description, start_date, end_date, status, category_id, resource_id
-//         ]);
-//     } catch (error) {
-//         throw new Error(`Failed to update goal: ${error.message}`);
-//     }
-// }
 export async function updateGoal(goalId, goalData) {
     const { name, description, start_date, end_date, status, category_id, resource_link } = goalData;
     try {
@@ -77,4 +46,25 @@ export async function updateGoal(goalId, goalData) {
     } catch (error) {
         throw new Error(`Failed to update goal: ${error.message}`);
     }
+}
+
+export async function fetchGoalsWithDaysLeft() {
+    try {
+        const [results] = await pool.query('CALL FetchGoalsWithDaysLeft()');
+        return results[0];
+    } catch (error) {
+        throw new Error(`Database error: ${error.message}`);
+    }
+}
+
+export async function addStudySession(sessionData, userId) {
+    const { start_time, end_time, session_length, goal_for_session } = sessionData;
+    await pool.query('CALL AddStudySession(?, ?, ?, ?, ?)', [
+        userId, start_time, end_time, session_length, goal_for_session
+    ]);
+}
+
+export async function fetchStudySessions(userId) {
+    const [sessions] = await pool.query('CALL FetchStudySessions(?)', [userId]);
+    return sessions[0]; // Assuming the stored procedure wraps results in an array
 }

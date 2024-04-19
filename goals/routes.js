@@ -47,7 +47,36 @@ function goalRoutes(app) {
         }
     });
     
-    
+    router.get("/:userId/progress-reminders", async (req, res) => {
+        try {
+            const goalsWithDaysLeft = await dao.fetchGoalsWithDaysLeft(req.params.userId);
+            res.json(goalsWithDaysLeft);
+        } catch (error) {
+            console.error("Error fetching progress reminders:", error);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    });
+
+    router.post("/:userId/study-sessions", async (req, res) => {
+        try {
+            await dao.addStudySession(req.body, req.params.userId);
+            res.status(201).json({ message: "Study session added successfully" });
+        } catch (error) {
+            console.error("Error adding study session:", error);
+            res.status(500).json({ error: error.message });
+        }
+    });
+
+    router.get("/:userId/study-sessions", async (req, res) => {
+        try {
+            const sessions = await dao.fetchStudySessions(req.params.userId);
+            res.json(sessions);
+        } catch (error) {
+            console.error("Error fetching study sessions:", error);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    });
+
     
     
     
