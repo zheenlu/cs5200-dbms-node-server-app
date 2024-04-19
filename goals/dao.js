@@ -9,7 +9,6 @@ export async function fetchAllGoals(userId) {
 export async function setNewGoal(goalData, userId) {
     const { name, description, learningResource, endDate, status, category } = goalData;
 
-    // Find or create resource
     const [resource] = await pool.query('SELECT id FROM resource WHERE link = ?', [learningResource]);
     let resourceId;
     if (resource.length) {
@@ -19,12 +18,10 @@ export async function setNewGoal(goalData, userId) {
         resourceId = insertResource.insertId;
     }
 
-    // Find category id
     const [categoryRow] = await pool.query('SELECT id FROM category WHERE name = ?', [category]);
     if (!categoryRow.length) throw new Error('Category not found');
     const categoryId = categoryRow[0].id;
 
-    // Insert goal with resource and category id
     const [result] = await pool.query('INSERT INTO goal (name, description, start_date, end_date, status, category_id, resource_id, user_id) VALUES (?, ?, NOW(), ?, ?, ?, ?, ?)', [name, description, endDate, status, categoryId, resourceId, userId]);
     return result.insertId;
 }
@@ -32,7 +29,6 @@ export async function setNewGoal(goalData, userId) {
 
 
 export async function deleteGoal(goalId) {
-    // Calling a stored procedure to delete a goal
     await pool.query('CALL DeleteGoal(?)', [goalId]);
 }
 
@@ -66,5 +62,5 @@ export async function addStudySession(sessionData, userId) {
 
 export async function fetchStudySessions(userId) {
     const [sessions] = await pool.query('CALL FetchStudySessions(?)', [userId]);
-    return sessions[0]; // Assuming the stored procedure wraps results in an array
+    return sessions[0]; 
 }

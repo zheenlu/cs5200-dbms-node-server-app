@@ -4,7 +4,6 @@ import express from 'express';
 function goalRoutes(app) {
     const router = express.Router();
 
-    // Endpoint to get all goals for a specific user
     router.get("/:userId/goals", async (req, res) => {
         try {
             const goals = await dao.fetchAllGoals(req.params.userId);
@@ -28,7 +27,7 @@ function goalRoutes(app) {
 
     router.delete("/:userId/goals/:goalId", async (req, res) => {
         try {
-            await dao.deleteGoal(req.params.goalId); // Adjust based on how your deleteGoal function is implemented
+            await dao.deleteGoal(req.params.goalId);
             res.json({ message: "Goal deleted successfully" });
         } catch (error) {
             console.error("Error deleting goal:", error);
@@ -77,9 +76,6 @@ function goalRoutes(app) {
         }
     });
 
-    
-    
-    
 
     app.use("/api/users", router);
 }
