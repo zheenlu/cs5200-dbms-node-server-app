@@ -7,7 +7,7 @@ function goalRoutes(app) {
     // Endpoint to get all goals for a specific user
     router.get("/:userId/goals", async (req, res) => {
         try {
-            const goals = await dao.getAllGoals(req.params.userId);
+            const goals = await dao.fetchAllGoals(req.params.userId);
             res.json(goals);
         } catch (error) {
             console.error("Error fetching goals:", error);
@@ -25,6 +25,20 @@ function goalRoutes(app) {
             res.status(500).json({ error: error.message });
         }
     });
+
+    router.delete("/:userId/goals/:goalId", async (req, res) => {
+        try {
+            await dao.deleteGoal(req.params.goalId); // Adjust based on how your deleteGoal function is implemented
+            res.json({ message: "Goal deleted successfully" });
+        } catch (error) {
+            console.error("Error deleting goal:", error);
+            res.status(500).json({ error: error.message });
+        }
+    });
+
+    
+
+    
     
     
     

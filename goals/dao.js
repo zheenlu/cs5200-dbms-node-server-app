@@ -1,9 +1,10 @@
 import pool from '../mysql.js';
 
-export async function getAllGoals(userId) {
+export async function fetchAllGoals(userId) {
     const [goals] = await pool.query('SELECT * FROM goal WHERE user_id = ?', [userId]);
     return goals;
 }
+
 
 export async function setNewGoal(goalData, userId) {
     const { name, description, learningResource, endDate, status, category } = goalData;
@@ -29,3 +30,11 @@ export async function setNewGoal(goalData, userId) {
     }
 }
 
+
+export async function deleteGoal(goalId) {
+    // Calling a stored procedure to delete a goal
+    await pool.query('CALL DeleteGoal(?)', [goalId]);
+}
+
+
+  
